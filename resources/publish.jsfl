@@ -34,6 +34,6 @@
 	if (args.length !== 2) {
 		fl.trace("!!!Error: Requires exactly one argument");
 	} else {
-		publish(argv[1]);
+		publish(args[1]);
 	}
 }()); 
