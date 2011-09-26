@@ -35,7 +35,7 @@
                debug="on"
 		       includeantruntime="no"
 	    >
-			<classpath refid="depend" />
+			<classpath refid="libs" />
 			<include name="org/yellcorp/**/*.java"/>
 
 			<compilerarg value="-deprecation"/>
