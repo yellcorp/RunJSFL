@@ -20,6 +20,7 @@ import org.yellcorp.app.jsfl.core.ScriptBridge;
 import org.yellcorp.app.jsfl.core.errors.ProcessException;
 import org.yellcorp.app.jsfl.core.errors.UnsupportedOSException;
 import org.yellcorp.util.FileSetResolver;
+import org.yellcorp.util.FileUtil;
 
 public class PublishApplication implements CommandLineApplication
 {
@@ -139,7 +140,7 @@ public class PublishApplication implements CommandLineApplication
 				inputBase = inputFile.getParentFile();
 			}
 			
-			File createdFile = new File(inputBase, createdPath);
+			File createdFile = FileUtil.resolveWithBase(inputBase, createdPath);
 			
 			if (outputFile == null)
 			{
@@ -176,7 +177,7 @@ public class PublishApplication implements CommandLineApplication
 	{
 		if (target.isDirectory())
 		{
-			target = new File(target, source.getName());
+			target = FileUtil.resolveWithBase(target, source.getName());
 		}
 		if (target.exists())
 		{

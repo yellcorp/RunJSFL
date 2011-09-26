@@ -14,6 +14,19 @@ import java.io.Writer;
 
 public class FileUtil
 {
+	static public File resolveWithBase(File base, String child)
+	{
+		File childFile = new File(child);
+		if (childFile.isAbsolute())
+		{
+			return childFile;
+		}
+		else
+		{
+			return new File(base, child);
+		}
+	}
+	
 	static public String readTextFile(String path) throws IOException
 	{
 		return readTextFile(new File(path), "UTF-8");

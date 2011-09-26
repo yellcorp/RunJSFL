@@ -29,7 +29,7 @@ public class FileSetResolver
 	{
 		if (arg.startsWith("@"))
 		{
-			addFromListFile(new File(baseFolder, arg.substring(1)));
+			addFromListFile(FileUtil.resolveWithBase(baseFolder, arg.substring(1)));
 		}
 		else if (arg.indexOf('*') >= 0 || arg.indexOf('?') >= 0)
 		{
@@ -37,7 +37,7 @@ public class FileSetResolver
 		}
 		else
 		{
-			add(new File(baseFolder, arg));
+			add(FileUtil.resolveWithBase(baseFolder, arg));
 		}
 	}
 	
