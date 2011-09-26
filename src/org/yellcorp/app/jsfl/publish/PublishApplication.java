@@ -80,7 +80,7 @@ public class PublishApplication implements CommandLineApplication
 		{
 			try {
 				File swf = publish(fla, targetFolder);
-				System.out.print("OK: " + swf);
+				System.out.println("OK: " + swf);
 			}
 			catch (RunException re)
 			{
