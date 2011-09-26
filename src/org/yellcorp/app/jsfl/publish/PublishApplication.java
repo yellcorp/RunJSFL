@@ -3,6 +3,7 @@ package org.yellcorp.app.jsfl.publish;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeoutException;
@@ -107,10 +108,9 @@ public class PublishApplication implements CommandLineApplication
 			String line;
 			String createdPath = null;
 			
-			BufferedReader scriptOut = bridge.run(
-					getClass().getResourceAsStream("publish.jsfl"),
-					"publish.jsfl", 
-					Arrays.asList(inputPath));
+			InputStream source = getClass().getResourceAsStream("/publish.jsfl");
+			
+			BufferedReader scriptOut = bridge.run(source, "publish.jsfl", Arrays.asList(inputPath));
 			
 			while ((line = scriptOut.readLine()) != null)
 			{
