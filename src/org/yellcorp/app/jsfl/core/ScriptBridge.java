@@ -138,7 +138,12 @@ public class ScriptBridge
 			waitedTime += pollTime;
 		}
 		
-		return new BufferedReader(new InputStreamReader(new FileInputStream(logFile), "UTF-8"));
+		FileInputStream byteStream = new FileInputStream(logFile);
+		
+		for (int skipBom = 0; skipBom < 3; skipBom++)
+			byteStream.read();
+		
+		return new BufferedReader(new InputStreamReader(byteStream, "UTF-8"));
 	}
 	
 
