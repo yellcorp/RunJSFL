@@ -19,7 +19,7 @@ public class TestGlobber
 		g.find(args[0], args[1]);
 		for (File f : g.getResult())
 		{
-			System.out.println(f.getPath());
+			System.out.println(f);
 		}
 	}
 }
