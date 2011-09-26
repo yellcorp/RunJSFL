@@ -1,15 +1,61 @@
 <project name="RunJSFL" basedir="..">
-	<property name="src"  location="src"/>
-	<property name="rsrc" location="resources"/>
 	<property name="bin"  location="bin"/>
 	<property name="dl"   location="dl"/>
 	<property name="lib"  location="lib"/>
+	<property name="out"  location="products"/>
+	<property name="rsrc" location="resources"/>
+	<property name="src"  location="src"/>
 
+	<property name="jarfile" location="${out}/runjsfl.jar" />
 	
+	<path id="libs">
+		<pathelement location="${lib}/commons-cli-1.2/commons-cli-1.2.jar" />
+		<pathelement location="${lib}/commons-io-2.0.1/commons-io-2.0.1.jar"/>
+	</path>
+
+	<target name="full" depends="init,clean,compile,package" />
+		
 	<target name="init">
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${dl}"/>
 		<mkdir dir="${lib}"/>
+		<mkdir dir="${out}"/>
+	</target>
+
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${bin}" includes="**/*" />
+			<fileset dir="${out}" includes="**/*" />
+		</delete>
+	</target>
+	
+	<target name="compile">
+		<javac srcdir="${src}"
+               destdir="${bin}"
+               debug="on"
+		       includeantruntime="no"
+	    >
+			<classpath refid="depend" />
+			<include name="org/yellcorp/**/*.java"/>
+
+			<compilerarg value="-deprecation"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<target name="package">
+		<jar basedir="${bin}"
+		     destfile="${jarfile}"
+		     compress="false"
+		     includes="**/*.class">
+		</jar>
+		<jar basedir="${rsrc}"
+		     destfile="${jarfile}"
+		     compress="false"
+		     includes="*"
+			 update="yes"
+			 duplicate="fail">
+		</jar>
 	</target>
 	
     <target name="download-libs" depends="init"
