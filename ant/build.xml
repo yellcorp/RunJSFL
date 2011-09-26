@@ -1,0 +1,30 @@
+<project name="RunJSFL" basedir="..">
+	<property name="src"  location="src"/>
+	<property name="rsrc" location="resources"/>
+	<property name="bin"  location="bin"/>
+	<property name="dl"   location="dl"/>
+	<property name="lib"  location="lib"/>
+
+	
+	<target name="init">
+		<mkdir dir="${bin}"/>
+		<mkdir dir="${dl}"/>
+		<mkdir dir="${lib}"/>
+	</target>
+	
+    <target name="download-libs" depends="init"
+            description="Downloads and extracts required libraries">
+    	
+        <get src="http://apache.mirror.rbftpnetworks.com//commons/cli/binaries/commons-cli-1.2-bin.tar.gz"
+    	     dest="${dl}" />
+    	<untar compression="gzip"
+    	       src="${dl}/commons-cli-1.2-bin.tar.gz"
+    	       dest="${lib}" />
+    	
+    	<get src="http://mirrors.ukfast.co.uk/sites/ftp.apache.org//commons/io/binaries/commons-io-2.0.1-bin.tar.gz"
+    	     dest="${dl}" />
+    	<untar compression="gzip"
+    	       src="${dl}/commons-io-2.0.1-bin.tar.gz"
+    	       dest="${lib}" />
+    </target>
+</project>
