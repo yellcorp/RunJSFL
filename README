@@ -1,0 +1,1 @@
+A loose bundle of hacks and contortions to launch JSFL scripts in Adobe Flash CS4+ from the command line. Includes support for passing command line parameters to JSFLs and redirects the contents of fl.outputPanel to STDOUT.
