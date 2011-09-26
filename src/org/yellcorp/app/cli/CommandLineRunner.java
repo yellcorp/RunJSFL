@@ -36,7 +36,7 @@ public class CommandLineRunner
 		if (commandLine.hasOption("help"))
 		{
 			printHelp(optionSet);
-			return;
+			System.exit(0);
 		}
 		
 		try {
