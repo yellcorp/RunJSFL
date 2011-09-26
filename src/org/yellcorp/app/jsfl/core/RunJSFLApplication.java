@@ -29,7 +29,7 @@ public class RunJSFLApplication implements CommandLineApplication
 	}
 
 	@Override
-	public void run(CommandLine commandLine) 
+	public int run(CommandLine commandLine) 
 	throws CommandLineException, RunException
 	{
 		String[] args = commandLine.getArgs();
@@ -51,6 +51,7 @@ public class RunJSFLApplication implements CommandLineApplication
 			{
 				System.out.println(line);
 			}
+			return 0;
 		}
 		catch (IOException e)
 		{

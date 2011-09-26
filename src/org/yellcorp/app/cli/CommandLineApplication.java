@@ -9,5 +9,5 @@ public interface CommandLineApplication
 {
 	String getApplicationName();
 	Options getOptions();
-	void run(CommandLine commandLine) throws CommandLineException, RunException;
+	int run(CommandLine commandLine) throws CommandLineException, RunException;
 }

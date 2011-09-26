@@ -40,8 +40,8 @@ public class CommandLineRunner
 		}
 		
 		try {
-			app.run(commandLine);
-			System.exit(0);
+			int exitCode = app.run(commandLine);
+			System.exit(exitCode);
 		}
 		catch (CommandLineException cle)
 		{

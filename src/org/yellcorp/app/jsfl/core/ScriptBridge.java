@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
@@ -81,6 +82,13 @@ public class ScriptBridge
 	throws IOException, InterruptedException, TimeoutException, UnsupportedOSException, ProcessException 
 	{
 		return run(FileUtil.readTextFile(jsflFile), jsflFile.getPath(), args);
+	}
+	
+	
+	public BufferedReader run(InputStream jsflInput, String arg0, Iterable<String> args) 
+			throws IOException, InterruptedException, TimeoutException, UnsupportedOSException, ProcessException 
+	{
+		return run(FileUtil.readTextStream(jsflInput), arg0, args);
 	}
 	
 	

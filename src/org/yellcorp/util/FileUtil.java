@@ -31,8 +31,20 @@ public class FileUtil
 	
 	static public String readTextFile(File path, String encoding) throws IOException
 	{
-		InputStream byteStream = new FileInputStream(path);
-		Reader decoder = new InputStreamReader(byteStream, encoding);
+		FileInputStream byteStream = new FileInputStream(path);
+		String contents = readTextStream(byteStream, encoding);
+		byteStream.close();
+		return contents;
+	}
+	
+	static public String readTextStream(InputStream stream) throws IOException
+	{
+		return readTextStream(stream, "UTF-8");
+	}
+	
+	static public String readTextStream(InputStream stream, String encoding) throws IOException
+	{
+		Reader decoder = new InputStreamReader(stream, encoding);
 		BufferedReader lineReader = new BufferedReader(decoder);
 		
 		StringBuilder contents = new StringBuilder();
@@ -44,7 +56,6 @@ public class FileUtil
 		}
 		lineReader.close();
 		decoder.close();
-		byteStream.close();
 		
 		return contents.toString();
 	}
