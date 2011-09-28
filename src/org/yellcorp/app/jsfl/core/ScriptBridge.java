@@ -140,10 +140,17 @@ public class ScriptBridge
 		
 		FileInputStream byteStream = new FileInputStream(logFile);
 		
+		//TODO: proper BOM reader
 		for (int skipBom = 0; skipBom < 3; skipBom++)
 			byteStream.read();
 		
 		return new BufferedReader(new InputStreamReader(byteStream, "UTF-8"));
+	}
+	
+	
+	public TempFileFactory getTempFileFactory()
+	{
+		return tempFileFactory;
 	}
 	
 

@@ -10,10 +10,11 @@
 		return null;
 	}
 	
-	function publish(documentPath, profileName)	{
-		var doc, documentURI, wasOpen, publishProfile;
+	function publish(documentPath, compileLogPath) {
+		var doc, documentURI, compileLogURI, wasOpen, publishProfile;
 		
 		documentURI = FLfile.platformPathToURI(documentPath);
+		compileLogURI = FLfile.platformPathToURI(compileLogPath);
 		
 		doc = getDocumentByURI(documentURI);
 		if (doc) {
@@ -22,7 +23,9 @@
 			wasOpen = false;
 			doc = fl.openDocument(documentURI);
 		}
+		fl.compilerErrors.clear();
 		doc.publish();
+		fl.compilerErrors.save(compileLogURI);
 		publishProfile = XML(doc.exportPublishProfileString());
 		fl.trace("+++" + publishProfile.PublishFormatProperties[0].flashFileName[0]);
 
@@ -31,9 +34,9 @@
 		}
 	}
 	
-	if (args.length !== 2) {
-		fl.trace("!!!Error: Requires exactly one argument");
+	if (args.length !== 3) {
+		fl.trace("!!!Error: Usage: publish.jsfl DOCUMENT COMPILELOG");
 	} else {
-		publish(args[1]);
+		publish(args[1], args[2]);
 	}
 }()); 

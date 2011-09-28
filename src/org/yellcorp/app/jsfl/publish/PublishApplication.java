@@ -2,8 +2,10 @@ package org.yellcorp.app.jsfl.publish;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeoutException;
@@ -19,6 +21,7 @@ import org.yellcorp.app.jsfl.core.OptionFactory;
 import org.yellcorp.app.jsfl.core.ScriptBridge;
 import org.yellcorp.app.jsfl.core.errors.ProcessException;
 import org.yellcorp.app.jsfl.core.errors.UnsupportedOSException;
+import org.yellcorp.app.jsfl.publish.FlashCompilerResult.ParseError;
 import org.yellcorp.util.FileSetResolver;
 import org.yellcorp.util.FileUtil;
 
@@ -110,8 +113,9 @@ public class PublishApplication implements CommandLineApplication
 			String createdPath = null;
 			
 			InputStream source = getClass().getResourceAsStream("/publish.jsfl");
+			File compileLog = bridge.getTempFileFactory().createFile("compile", ".txt");
 			
-			BufferedReader scriptOut = bridge.run(source, "publish.jsfl", Arrays.asList(inputPath));
+			BufferedReader scriptOut = bridge.run(source, "publish.jsfl", Arrays.asList(inputPath, compileLog.getAbsolutePath()));
 			
 			while ((line = scriptOut.readLine()) != null)
 			{
@@ -124,9 +128,22 @@ public class PublishApplication implements CommandLineApplication
 					throw new RunException(line.substring(LOG_MARKER_ERROR.length()));
 				}
 			}
+			
 			if (createdPath == null)
 			{
 				throw new RunException("No markers present in script output");
+			}
+
+			FileInputStream byteStream = new FileInputStream(compileLog);
+			//TODO: proper BOM reader
+			for (int skipBom = 0; skipBom < 3; skipBom++)
+				byteStream.read();
+			FlashCompilerResult compileResult = new FlashCompilerResult();
+			compileResult.parse(new BufferedReader(new InputStreamReader(byteStream, "UTF-8")));
+			
+			if (compileResult.getErrorCount() > 0)
+			{
+				throw new RunException("Compile errors");
 			}
 
 			File inputBase;
@@ -168,6 +185,10 @@ public class PublishApplication implements CommandLineApplication
 			throw new RunException(e);
 		}
 		catch (ProcessException e)
+		{
+			throw new RunException(e);
+		}
+		catch (ParseError e)
 		{
 			throw new RunException(e);
 		}
