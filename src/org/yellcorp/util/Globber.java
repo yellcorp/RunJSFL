@@ -12,6 +12,12 @@ import java.util.regex.Pattern;
 
 public class Globber
 {
+	private static final Pattern WINDOWS_DRIVE_ABSOLUTE_PATH =
+			Pattern.compile("[A-Za-z]:[/\\\\]");
+	
+	private static final Pattern WINDOWS_DRIVE_RELATIVE_PATH =
+			Pattern.compile("[A-Za-z]:");
+	
 	private HashSet<File> result;
 
 	
@@ -27,31 +33,59 @@ public class Globber
 	}
 
 
-	public void find(String string, String glob)
+	public void find(String basePath, String glob)
 	{
-		find(new File(string), glob);
+		find(new File(basePath), glob);
 	}
 	
 	
-	public void find(File folder, String glob)
+	public void find(File basePath, String glob)
 	{
-		if (File.separatorChar != '/')
+		// check for root in glob
+		if (File.separatorChar == '/' && glob.startsWith("/"))
 		{
-			glob = glob.replace(File.separatorChar, '/');
+			basePath = new File("/");
+			glob = glob.substring(1);
 		}
-		int slash = glob.indexOf('/');
-		if (slash >= 0)
+		else if (File.separatorChar == '\\')
 		{
-			String immediate = glob.substring(0, slash);
-			String remainder = glob.substring(slash + 1);
-			
-			if (remainder.length() == 0) remainder = "**";
-			
-			findNode(folder, immediate, remainder);
+			if (glob.startsWith("\\\\"))
+			{
+				int serverNameSlash = glob.indexOf('\\', 2);
+				if (serverNameSlash > -1)
+				{
+					basePath = new File(glob.substring(0, serverNameSlash + 1));
+					glob = glob.substring(serverNameSlash + 1);
+				}
+			}
+			else if (WINDOWS_DRIVE_ABSOLUTE_PATH.matcher(glob).lookingAt())
+			{
+				// absolute drive & path
+				basePath = new File(glob.substring(0, 2) + "\\");
+				glob = glob.substring(3);
+			}
+			else if (WINDOWS_DRIVE_RELATIVE_PATH.matcher(glob).lookingAt())
+			{
+				// absolute drive, relative path
+				basePath = new File(glob.substring(0, 2));
+				glob = glob.substring(2);
+			}
+		}
+		findBase(basePath, glob);
+	}
+	
+	private void findBase(File basePath, String glob)
+	{
+		int sep = glob.indexOf(File.separatorChar);
+		if (sep >= 0)
+		{
+			String immediate = glob.substring(0, sep);
+			String remainder = glob.substring(sep + 1);
+			findNode(basePath, immediate, remainder);
 		}
 		else
 		{
-			findLeaf(folder, glob);
+			findLeaf(basePath, glob);
 		}
 	}
 
@@ -60,11 +94,16 @@ public class Globber
 	{
 		List<File> matchingChildren = new ArrayList<File>(); 
 		
+		if (remainderGlob.length() == 0)
+		{
+			remainderGlob = "**";
+		}
+		
 		if (immediateGlob.equals("**"))
 		{
 			addRecursive(folder, matchingChildren, false);
 		}
-		else
+		else if (containsGlobWildcards(immediateGlob))
 		{
 			Pattern regex = globToRegex(immediateGlob);
 			for (File query : folder.listFiles())
@@ -75,17 +114,23 @@ public class Globber
 				}
 			}
 		}
+		else
+		{
+			File testSubdir = new File(folder, immediateGlob);
+			if (testSubdir.exists() && testSubdir.isDirectory())
+				matchingChildren.add(testSubdir);
+		}
 		
 		for (File subfolder : matchingChildren)
 		{
-			find(subfolder, remainderGlob);
+			findBase(subfolder, remainderGlob);
 		}
 	}
 
 
 	private void findLeaf(File folder, String glob)
 	{
-		if (glob.equals("**"))
+		if (glob.length() == 0 || glob.equals("**"))
 		{
 			addRecursive(folder, result, true);
 		}
@@ -154,5 +199,11 @@ public class Globber
 		}
 		regex.append('$');
 		return Pattern.compile(regex.toString());
+	}
+	
+	
+	public static boolean containsGlobWildcards(String glob)
+	{
+		return glob.indexOf('*') >= 0 || glob.indexOf('?') >= 0;
 	}
 }
