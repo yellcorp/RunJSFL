@@ -25,7 +25,7 @@ public class ScriptBridge
 		"  (function() { \n" +
 		"@SOURCE@ \n" +
 		"  }()); \n" +
-		"  fl.outputPanel.save(FLfile.platformPathToURI(@LOG@)); \n" +
+		"  fl.outputPanel.save(FLfile.platformPathToURI(@OUTPUT@)); \n" +
 		"  FLfile.remove(FLfile.platformPathToURI(@LOCK@)); \n" +
 		"}()); \n" );
 	
@@ -101,13 +101,13 @@ public class ScriptBridge
 		}
 		
 		File wrappedSourceFile = tempFileFactory.createFile("src", ".jsfl");
-		File logFile = tempFileFactory.createFile("log", ".txt");
+		File outputFile = tempFileFactory.createFile("log", ".txt");
 		File lockFile = tempFileFactory.createFile("bridge", ".lock");
 		
 		HashMap<String, String> fields = new HashMap<String, String>();
 		fields.put("ARGS", formatScriptArgs(arg0, args));
 		fields.put("LOCK", JavascriptUtil.formatStringLiteral(lockFile.getCanonicalPath()));
-		fields.put("LOG", JavascriptUtil.formatStringLiteral(logFile.getCanonicalPath()));
+		fields.put("OUTPUT", JavascriptUtil.formatStringLiteral(outputFile.getCanonicalPath()));
 		fields.put("SOURCE", jsflSource);
 		
 		// do source substitution
@@ -138,7 +138,7 @@ public class ScriptBridge
 			waitedTime += pollTime;
 		}
 		
-		FileInputStream byteStream = new FileInputStream(logFile);
+		FileInputStream byteStream = new FileInputStream(outputFile);
 		
 		//TODO: proper BOM reader
 		for (int skipBom = 0; skipBom < 3; skipBom++)
